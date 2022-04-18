@@ -20,7 +20,7 @@ import model.Movie;
 public class MovieController {
 
 	@Autowired
-	MovieRepository mr;
+	private MovieRepository mr;
 	
 	@RequestMapping(value = "/saveMovie")
 	public void saveMovie(@Valid @ModelAttribute("Movie") Movie mov, BindingResult br) {
