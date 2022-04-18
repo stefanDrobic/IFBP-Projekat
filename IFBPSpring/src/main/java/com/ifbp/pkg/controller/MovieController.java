@@ -36,8 +36,17 @@ public class MovieController {
 	}
 	
 	//TODO: Testirati sa frontom
-	public List<Movie> getAll() {
+	//TODO: Valjda ce Iterable unutar springa vratiti JSON automatski na angular zahtev, tj. kada ang. gadja ovu adresu, dobije nazad json za parsiranje
+	@RequestMapping(value = "/getAllMoviesRest", method = RequestMethod.GET)
+	public Iterable<Movie> getAll() {
 		return mr.findAll();
+	}
+	
+	//TODO: Testirati sa frontom
+	//TODO: Preispitati sta front salje, da li ceo film ili id od filma, zaviseci od toga vracamo razlicite stvari
+	@RequestMapping(value = "/getMovieDetailsRest", method = RequestMethod.GET)
+	public Movie getMovieDetails(int movieId) {
+		return mr.findById(movieId).get();
 	}
 	
 }
