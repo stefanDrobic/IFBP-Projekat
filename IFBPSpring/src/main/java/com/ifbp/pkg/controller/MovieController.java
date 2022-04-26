@@ -1,5 +1,7 @@
 package com.ifbp.pkg.controller;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -47,6 +49,33 @@ public class MovieController {
 	@RequestMapping(value = "/getMovieDetailsRest", method = RequestMethod.GET)
 	public Movie getMovieDetails(int movieId) {
 		return mr.findById(movieId).get();
+	}
+	
+	//TODO: Testirati metode za pribavljanje listi filmova preko upita sa frontom
+	//Moguca promena sa List<Movie> na Iterable<Movie>
+	@RequestMapping(value = "/getMovieByAgeRatingRest", method = RequestMethod.GET)
+	public List<Movie> getMovieByAgeRatingRest(String ageRating) {
+		return mr.findByAgeRating(ageRating);
+	}
+	
+	@RequestMapping(value = "/getMovieLessThanLengthRest", method = RequestMethod.GET)
+	public List<Movie> getMovieLessThanLengthRest(Time t) {
+		return mr.findByLengthLessThan(t);
+	}
+	
+	@RequestMapping(value = "/getMovieMoreThanLengthRest", method = RequestMethod.GET)
+	public List<Movie> getMovieMoreThanLengthRest(Time t) {
+		return mr.findByLengthGreaterThan(t);
+	}
+	
+	@RequestMapping(value = "/getMovieAfterReleaseDateRest", method = RequestMethod.GET)
+	public List<Movie> getMovieAfterReleaseDateRest(Date releaseDate) {
+		return mr.findByReleaseDateGreaterThan(releaseDate);
+	}
+
+	@RequestMapping(value = "/getMovieBeforeReleaseDateRest", method = RequestMethod.GET)
+	public List<Movie> getMovieBeforeReleaseDateRest(Date releaseDate) {
+		return mr.findByReleaseDateLessThan(releaseDate);
 	}
 	
 }
