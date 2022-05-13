@@ -1,14 +1,15 @@
 package com.ifbp.pkg.controller;
 
-import javax.validation.Valid;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ifbp.pkg.repository.AccountRepository;
 
@@ -20,32 +21,35 @@ public class AccountController {
 
 	@Autowired
 	AccountRepository ar;
-	
-	//TODO: Preraditi u lokalni metod, treba rest da zovu.
-	@RequestMapping(value = "/saveKorisnik")
-	public boolean saveKorisnik(@Valid @ModelAttribute("Account") Account acc, BindingResult br) {
-		if(br.hasErrors()) {
-			return false;
-		} else {
-			ar.save(acc);
-			return true;
-		}
-	}
-	
-	//Gotovo, potrebno testirati sa frontom.
+
 	@RequestMapping(value = "/saveKorisnikRest", method = RequestMethod.POST)
-	public void saveKorisnikRest(@Valid @RequestBody Account acc, BindingResult br) {
-		this.saveKorisnik(acc, br);
+	public void saveKorisnik(String username, String password) {
+		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
+
+		Account acc = new Account();
+		acc.setUsername(username);
+		acc.setPassword(bcpe.encode(password));
+
+		ar.save(acc);
 	}
-	
-	//TODO: Uspostaviti security prije login metoda.
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public boolean login(@Valid @ModelAttribute("Account") Account acc, BindingResult br) {
-		if(br.hasErrors()) {
-			return false;
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String login(String username, String password) {
+		BCryptPasswordEncoder bcpe = new BCryptPasswordEncoder();
+
+		Optional<Account> acc = ar.findByUsername(username);
+
+		if (acc.isEmpty()) {
+			return "No Account with username:" + username;
+		}
+
+		if (acc.get().getPassword().equals(bcpe.encode(password))) {
+			return "Successfully logged in!";
 		} else {
-			return true;
+			return "Wrong password!";
 		}
 	}
-	
+
 }
