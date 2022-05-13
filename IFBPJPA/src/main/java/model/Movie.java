@@ -1,8 +1,18 @@
 package model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+
 
 
 /**
@@ -11,6 +21,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="Movie.findAll", query="SELECT m FROM Movie m")
+//@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Movie implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -45,7 +56,7 @@ public class Movie implements Serializable {
 	private List<Comment> comments;
 
 	//bi-directional many-to-one association to Account
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Account account;
 
 	//bi-directional many-to-one association to Premiere
