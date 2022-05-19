@@ -2,14 +2,12 @@ package com.ifbp.pkg.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,17 +24,11 @@ public class MovieController {
 	@Autowired
 	private MovieRepository mr;
 
-	@RequestMapping(value = "/saveMovie")
-	public void saveMovie(@Valid @ModelAttribute("Movie") Movie mov, BindingResult br) {
-		if (!br.hasErrors()) {
-			mr.save(mov);
-		}
-	}
-
 	// TODO: Testirati sa frontom
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = "/saveMovieRest", method = RequestMethod.POST)
-	public void saveMovieRest(@Valid @ModelAttribute("Movie") Movie mov, BindingResult br) {
-		this.saveMovie(mov, br);
+	public void saveMovieRest(@RequestBody Movie mov) {
+		mr.save(mov);
 	}
 
 	@PreAuthorize("isAuthenticated()")
@@ -56,9 +48,17 @@ public class MovieController {
 	// TODO: Testirati sa frontom
 	// TODO: Preispitati sta front salje, da li ceo film ili id od filma, zaviseci
 	// od toga vracamo razlicite stvari
-	@RequestMapping(value = "/getMovieDetailsRest", method = RequestMethod.GET)
-	public Movie getMovieDetails(int movieId) {
-		return mr.findById(movieId).get();
+	@PreAuthorize("isAuthenticated()")
+	@ResponseBody
+	@RequestMapping(value = "/getMovieDetailsRest/{movieId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Movie getMovieDetails(@PathVariable(value="movieId") int id) {
+		Movie m =  mr.findById(id).get();
+		
+		m.setAccount(null);
+		m.setComments(null);
+		m.setPremieres(null);
+		
+		return m;
 	}
 
 //	// TODO: Testirati metode za pribavljanje listi filmova preko upita sa frontom
