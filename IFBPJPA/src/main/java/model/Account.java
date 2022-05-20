@@ -25,7 +25,7 @@ public class Account implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id_account")
-	private int idAccount;
+	private Integer idAccount;
 
 	private String password;
 

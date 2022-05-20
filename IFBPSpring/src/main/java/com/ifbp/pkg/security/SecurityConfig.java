@@ -20,17 +20,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-//		http
-//			.authorizeRequests()
-//				.antMatchers("/", "/home", "/user").permitAll()
-//				.anyRequest().authenticated()
-//				.and()
-//			.formLogin()
-//				.loginPage("/index.jsp")
-//				.permitAll()
-//				.and()
-//			.logout()
-//				.permitAll();
+		http
+			.authorizeRequests()
+				.antMatchers("/", "/home", "/user", "/movie").permitAll()
+				.anyRequest().permitAll()
+				.and()
+			.logout()
+				.permitAll()
+			.and()
+			.csrf().disable();
 	}
 	
 	@Bean
